@@ -10,7 +10,7 @@ const sizes = {
   `,
   medium: css`
     font-size: 1.4rem;
-    padding: 1.2rem 1.6rem;
+    padding: 0.8rem 1.6rem;
     font-weight: 500;
   `,
   large: css`
@@ -52,10 +52,10 @@ const Button = styled.button`
   border: none;
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-sm);
-  /* cursor: not-allowed; */
-  ${(props) => sizes[props.size]}
-  ${(props) => variations[props.variation]}
-    ${(props) =>
+  text-transform: uppercase;
+  ${(props) => sizes[props.size]};
+  ${(props) => variations[props.variation]};
+  ${(props) =>
     props.disabled &&
     css`
       cursor: not-allowed;

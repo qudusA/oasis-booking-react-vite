@@ -1,8 +1,6 @@
 import style from "styled-components";
 import CarbinTable from "../features/cabins/CabinTable";
-import Button from "../ui/Button";
-import { useState } from "react";
-import CreateCabinForm from "../features/cabins/CreateCabinForm";
+import AddCabin from "../features/cabins/AddCabin";
 
 const TableDiv = style.div``;
 
@@ -16,16 +14,11 @@ const TableDiv = style.div``;
 // `;
 
 function Cabins() {
-  const [isCabinFormOpen, setIsCabinFormOpen] = useState(false);
-
   return (
     <>
       <TableDiv>All cabins</TableDiv>
       <CarbinTable />
-      <Button onClick={() => setIsCabinFormOpen((isOpen) => !isOpen)}>
-        add
-      </Button>
-      {isCabinFormOpen && <CreateCabinForm />}
+      <AddCabin />
     </>
   );
 }

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { getAllCabin } from "../../services/cabin";
 import Spinner from "../../ui/Spinner";
 import CabinRow from "./CabinRow";
+import ErrorFallback from "../../ui/ErrorFallback";
 
 const Table = styled.div`
   border: 1px solid var(--color-grey-200);
@@ -33,12 +34,17 @@ const TableHead = styled.div`
 `;
 
 function CarbinTable() {
-  const { data: carbinData, isLoading } = useQuery({
+  const {
+    data: carbinData,
+    error,
+    isLoading,
+  } = useQuery({
     queryKey: ["cabins"],
     queryFn: getAllCabin,
   });
 
   if (isLoading) return <Spinner />;
+  if (error) return <ErrorFallback>{error.message}</ErrorFallback>;
   return (
     <Table role="table">
       <TableHeader>

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const StyledErrorFallback = styled.main`
   height: 100vh;
@@ -29,3 +30,15 @@ const Box = styled.div`
     color: var(--color-grey-500);
   }
 `;
+
+export default function ErrorFallback({ children }) {
+  return (
+    <StyledErrorFallback>
+      <Box>{children}</Box>
+    </StyledErrorFallback>
+  );
+}
+
+ErrorFallback.propTypes = {
+  children: PropTypes.any,
+};

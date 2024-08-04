@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PropTypes from "prop-types";
 
 import { useForm } from "react-hook-form";
@@ -9,8 +8,9 @@ import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
-import toast from "react-hot-toast";
-import { saveACarbin } from "../../services/cabin";
+
+import useCreateCabin from "./useCreateCabin";
+import useUpdateCabin from "./useUpdateCabin";
 
 const FormRow = styled.div`
   display: grid;
@@ -48,48 +48,30 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function CreateCabinForm({ cabin }) {
+function CreateCabinForm({ cabin = {}, onClose }) {
   const { register, handleSubmit, reset, formState, getValues } = useForm({
     defaultValues: cabin,
   });
+  const { createCabin, isCreating } = useCreateCabin();
+  const { updateCabin, isUpdating } = useUpdateCabin();
 
   const { id: editId } = cabin;
   const { errors } = formState;
   const isEdit = Boolean(editId);
-
-  const queryClient = useQueryClient();
-
-  const { mutate: createCabin, isPending: isCreating } = useMutation({
-    mutationFn: saveACarbin,
-    onSuccess: () => {
-      toast.success("carbin creation succeful...");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const { mutate: updateCabin, isPending: isUpdating } = useMutation({
-    mutationFn: ({ cabinObj, id }) => saveACarbin(cabinObj, id),
-    onSuccess: () => {
-      toast.success("carbin update succeful...");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
 
   const isCreatingOrUpdating = isCreating || isUpdating;
 
   function onSubmit(data) {
     const image = typeof data.image === "string" ? data.image : data.image[0];
     if (isEdit) {
-      console.log(image, data);
       updateCabin(
         { cabinObj: { ...data, image }, id: editId },
-        { onSuccess: () => reset() }
+        {
+          onSuccess: () => {
+            reset();
+            onClose?.();
+          },
+        }
       );
     } else
       createCabin(
@@ -97,6 +79,7 @@ function CreateCabinForm({ cabin }) {
         {
           onSuccess: () => {
             reset();
+            onClose?.();
           },
         }
       );
@@ -202,11 +185,10 @@ function CreateCabinForm({ cabin }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button onClick={() => onClose?.()} variation="secondary" type="reset">
           Cancel
         </Button>
         <Button disabled={isCreatingOrUpdating}>
-          {" "}
           {isEdit ? "Edit cabin" : "create cabin"}
         </Button>
       </FormRow>
@@ -218,4 +200,5 @@ export default CreateCabinForm;
 
 CreateCabinForm.propTypes = {
   cabin: PropTypes.any,
+  onClose: PropTypes.any,
 };

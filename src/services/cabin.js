@@ -3,7 +3,7 @@ import supabase, { supabaseUrl } from "./supabase";
 export async function getAllCabin() {
   let { data: carbins, error } = await supabase.from("carbins").select("*");
 
-  if (error) return "error occur while fetching cabins";
+  if (error) throw new Error("error occur while fetching cabins");
 
   return carbins;
 }
@@ -15,12 +15,7 @@ export async function deleteACabinItemById(id) {
 }
 
 export async function saveACarbin(cabin, id) {
-  // https://hfzygplbfkpiklzemmsx.supabase.co/storage/v1/object/public/carbinImage/cabin-001.jpg
-
-  console.log(cabin, id);
   const hasImgPath = cabin.image?.startsWith?.(supabaseUrl);
-
-  console.log(hasImgPath);
 
   const imageName = `${Math.random() + "-" + cabin.image?.name}`?.replaceAll(
     "/",
@@ -40,7 +35,6 @@ export async function saveACarbin(cabin, id) {
   const { data, error } = await query.select();
 
   if (error) throw new Error(`error occur while saving to carbin`);
-  console.log(data);
   if (hasImgPath) return data;
 
   const { error: uploadError } = await supabase.storage

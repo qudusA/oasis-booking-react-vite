@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { HiPencil, HiTrash, HiSquare2Stack } from "react-icons/hi2";
 import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm";
+import useCreateCabin from "./useCreateCabin";
 
 const TableRow = styled.div`
   display: grid;
@@ -48,6 +49,7 @@ const Discount = styled.div`
 
 function CabinRow({ cabin }) {
   const queryClient = useQueryClient();
+  const { createCabin, isCreating } = useCreateCabin();
   const [showForm, setShowForm] = useState(false);
 
   const { isLoading: isDeleting, mutate } = useMutation({
@@ -61,6 +63,17 @@ function CabinRow({ cabin }) {
     },
   });
 
+  function handleDuplicateCabin(cabin) {
+    createCabin({
+      maxCapacity: cabin.maxCapacity,
+      regularPrice: cabin.regularPrice,
+      discount: cabin.discount,
+      image: cabin.image,
+      name: `copy of ${cabin.name}`,
+      description: cabin.description,
+    });
+  }
+
   return (
     <>
       <TableRow>
@@ -68,9 +81,14 @@ function CabinRow({ cabin }) {
         <Cabin>{cabin.name}</Cabin>
         <div>fill up to {cabin.maxCapacity} guest</div>
         <Price>{cabin.regularPrice}</Price>
-        <Discount>{cabin.discount}</Discount>
+        <Discount>
+          {cabin.discount ? cabin.discount : <span>&mdash;</span>}
+        </Discount>
         <div>
-          <button>
+          <button
+            disabled={isCreating}
+            onClick={() => handleDuplicateCabin(cabin)}
+          >
             <HiSquare2Stack />
           </button>
           <button onClick={() => setShowForm((show) => !show)}>
