@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { createPortal } from "react-dom";
 import { cloneElement, createContext, useContext, useState } from "react";
+import useModal from "../hooks/useDetectClickOutsideOfModal";
 
 const Overlayed = styled.div`
   background-color: var(--backdrop-color);
@@ -12,14 +13,17 @@ const Overlayed = styled.div`
   height: 100vh;
   width: 100vw;
   backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   transition: all 0.5s;
 `;
 
 const Model = styled.div`
-  width: 70%;
-  margin: 0 auto;
+  /* width: 70%; */
   position: relative;
+  background-color: var(--color-grey-0);
 `;
 
 const CloseModel = styled.span`
@@ -56,20 +60,24 @@ export default function Modal({ children }) {
   );
 }
 
-function Open({ label, openAndCloseBtnName }) {
+function Open({ children, openAndCloseBtnName }) {
   const { open } = useContext(ModalContext);
 
-  // return <CloseModel onClick={openAndClose}>{label}</CloseModel>;
-  return <span onClick={() => open(openAndCloseBtnName)}>{label}</span>;
+  return (
+    <div>
+      {cloneElement(children, { onClick: () => open(openAndCloseBtnName) })}
+    </div>
+  );
 }
 
 function Window({ children, windowName }) {
   const { showForm, close } = useContext(ModalContext);
+  const { ref } = useModal({ close });
 
   if (windowName !== showForm) return null;
   return createPortal(
     <Overlayed>
-      <Model>
+      <Model ref={ref}>
         <CloseModel>
           <span onClick={close}>&times;</span>
         </CloseModel>
@@ -94,6 +102,6 @@ Window.propTypes = {
 };
 
 Open.propTypes = {
-  label: PropTypes.any,
+  children: PropTypes.any,
   openAndCloseBtnName: PropTypes.any,
 };

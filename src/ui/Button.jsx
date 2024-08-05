@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import PropTypes from "prop-types";
 
 const sizes = {
   small: css`
@@ -48,7 +49,7 @@ const variations = {
   `,
 };
 
-const Button = styled.button`
+const StyledButton = styled.button`
   border: none;
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-sm);
@@ -62,9 +63,21 @@ const Button = styled.button`
     `};
 `;
 
-Button.defaultProps = {
+export default function Button({ onClick, children, variation }) {
+  return (
+    <StyledButton variation={variation} onClick={() => onClick?.()}>
+      {children}
+    </StyledButton>
+  );
+}
+
+StyledButton.defaultProps = {
   variation: "primary",
   size: "medium",
 };
 
-export default Button;
+Button.propTypes = {
+  children: PropTypes.any,
+  onClick: PropTypes.any,
+  variation: PropTypes.any,
+};

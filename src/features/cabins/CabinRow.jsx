@@ -4,9 +4,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteACabinItemById } from "../../services/cabin";
 import toast from "react-hot-toast";
 import { HiPencil, HiTrash, HiSquare2Stack } from "react-icons/hi2";
-import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm";
 import useCreateCabin from "./useCreateCabin";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
 
 const TableRow = styled.div`
   display: grid;
@@ -50,7 +51,7 @@ const Discount = styled.div`
 function CabinRow({ cabin }) {
   const queryClient = useQueryClient();
   const { createCabin, isCreating } = useCreateCabin();
-  const [showForm, setShowForm] = useState(false);
+  // const [showForm, setShowForm] = useState(false);
 
   const { isLoading: isDeleting, mutate } = useMutation({
     mutationFn: deleteACabinItemById,
@@ -75,32 +76,45 @@ function CabinRow({ cabin }) {
   }
 
   return (
-    <>
-      <TableRow>
-        <Img src={cabin.image} />
-        <Cabin>{cabin.name}</Cabin>
-        <div>fill up to {cabin.maxCapacity} guest</div>
-        <Price>{cabin.regularPrice}</Price>
-        <Discount>
-          {cabin.discount ? cabin.discount : <span>&mdash;</span>}
-        </Discount>
-        <div>
-          <button
-            disabled={isCreating}
-            onClick={() => handleDuplicateCabin(cabin)}
-          >
-            <HiSquare2Stack />
-          </button>
-          <button onClick={() => setShowForm((show) => !show)}>
-            <HiPencil />
-          </button>
-          <button disabled={isDeleting} onClick={() => mutate(cabin.id)}>
-            <HiTrash />
-          </button>
-        </div>
-      </TableRow>
-      <div>{showForm && <CreateCabinForm cabin={cabin} />}</div>
-    </>
+    <TableRow>
+      <Img src={cabin.image} />
+      <Cabin>{cabin.name}</Cabin>
+      <div>fill up to {cabin.maxCapacity} guest</div>
+      <Price>{cabin.regularPrice}</Price>
+      <Discount>
+        {cabin.discount ? cabin.discount : <span>&mdash;</span>}
+      </Discount>
+      <div>
+        <button
+          disabled={isCreating}
+          onClick={() => handleDuplicateCabin(cabin)}
+        >
+          <HiSquare2Stack />
+        </button>
+        <Modal>
+          <Modal.OpenAndClose>
+            <button>
+              <HiPencil />
+            </button>
+          </Modal.OpenAndClose>
+          <Modal.Window>
+            <CreateCabinForm cabin={cabin} />
+          </Modal.Window>
+
+          <Modal.OpenAndClose openAndCloseBtnName={"confirm-delete"}>
+            <button>
+              <HiTrash />
+            </button>
+          </Modal.OpenAndClose>
+          <Modal.Window windowName={"confirm-delete"}>
+            <ConfirmDelete
+              disabled={isDeleting}
+              onConfirm={() => mutate(cabin.id)}
+            />
+          </Modal.Window>
+        </Modal>
+      </div>
+    </TableRow>
   );
 }
 
