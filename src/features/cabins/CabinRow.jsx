@@ -4,10 +4,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteACabinItemById } from "../../services/cabin";
 import toast from "react-hot-toast";
 import { HiPencil, HiTrash, HiSquare2Stack } from "react-icons/hi2";
+import { BiDotsVerticalRounded } from "react-icons/bi";
 import CreateCabinForm from "./CreateCabinForm";
 import useCreateCabin from "./useCreateCabin";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
+// import ContextMenuModal from "../../ui/ContextMenuModal";
+import ContextMenu from "../../ui/ContextMenu";
+import { useRef, useState } from "react";
 
 const TableRow = styled.div`
   display: grid;
@@ -51,7 +55,9 @@ const Discount = styled.div`
 function CabinRow({ cabin }) {
   const queryClient = useQueryClient();
   const { createCabin, isCreating } = useCreateCabin();
-  // const [showForm, setShowForm] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef();
+  const [position, setPosition] = useState({});
 
   const { isLoading: isDeleting, mutate } = useMutation({
     mutationFn: deleteACabinItemById,
@@ -73,6 +79,12 @@ function CabinRow({ cabin }) {
       name: `copy of ${cabin.name}`,
       description: cabin.description,
     });
+  }
+
+  function handleClick() {
+    setIsOpen((open) => !open);
+    console.log(ref.current.getBoundingClientRect());
+    setPosition(ref.current.getBoundingClientRect());
   }
 
   return (
@@ -106,6 +118,7 @@ function CabinRow({ cabin }) {
               <HiTrash />
             </button>
           </Modal.OpenAndClose>
+
           <Modal.Window windowName={"confirm-delete"}>
             <ConfirmDelete
               disabled={isDeleting}
@@ -113,6 +126,17 @@ function CabinRow({ cabin }) {
             />
           </Modal.Window>
         </Modal>
+        {/* <ContextMenuModal>
+          <ContextMenuModal.OpenContextMenu openId={cabin.id}> */}
+        <button onClick={handleClick} ref={ref}>
+          <BiDotsVerticalRounded />
+        </button>
+        {/* <ContextMenu /> */}
+        {isOpen && <ContextMenu position={position} />}
+        {/* </ContextMenuModal.OpenContextMenu>
+          <ContextMenuModal.ContextBody verifyId={cabin.id}>
+          </ContextMenuModal.ContextBody>
+        </ContextMenuModal> */}
       </div>
     </TableRow>
   );
