@@ -72,7 +72,7 @@ function Open({ children, openAndCloseBtnName }) {
 
 function Window({ children, windowName }) {
   const { showForm, close } = useContext(ModalContext);
-  const { ref } = useModal({ close });
+  const ref = useModal({ close });
 
   if (windowName !== showForm) return null;
   return createPortal(

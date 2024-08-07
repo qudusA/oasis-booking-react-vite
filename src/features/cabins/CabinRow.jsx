@@ -4,14 +4,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteACabinItemById } from "../../services/cabin";
 import toast from "react-hot-toast";
 import { HiPencil, HiTrash, HiSquare2Stack } from "react-icons/hi2";
-import { BiDotsVerticalRounded } from "react-icons/bi";
 import CreateCabinForm from "./CreateCabinForm";
 import useCreateCabin from "./useCreateCabin";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
-// import ContextMenuModal from "../../ui/ContextMenuModal";
-import ContextMenu from "../../ui/ContextMenu";
-import { useRef, useState } from "react";
+import ContextMenuModal from "../../ui/ContextMenuModal";
+// import ContextMenu from "../../ui/ContextMenu";
 
 const TableRow = styled.div`
   display: grid;
@@ -54,10 +52,7 @@ const Discount = styled.div`
 
 function CabinRow({ cabin }) {
   const queryClient = useQueryClient();
-  const { createCabin, isCreating } = useCreateCabin();
-  const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef();
-  const [position, setPosition] = useState({});
+  const { createCabin } = useCreateCabin();
 
   const { isLoading: isDeleting, mutate } = useMutation({
     mutationFn: deleteACabinItemById,
@@ -81,12 +76,6 @@ function CabinRow({ cabin }) {
     });
   }
 
-  function handleClick() {
-    setIsOpen((open) => !open);
-    console.log(ref.current.getBoundingClientRect());
-    setPosition(ref.current.getBoundingClientRect());
-  }
-
   return (
     <TableRow>
       <Img src={cabin.image} />
@@ -97,46 +86,44 @@ function CabinRow({ cabin }) {
         {cabin.discount ? cabin.discount : <span>&mdash;</span>}
       </Discount>
       <div>
-        <button
-          disabled={isCreating}
-          onClick={() => handleDuplicateCabin(cabin)}
-        >
-          <HiSquare2Stack />
-        </button>
         <Modal>
-          <Modal.OpenAndClose>
-            <button>
-              <HiPencil />
-            </button>
-          </Modal.OpenAndClose>
-          <Modal.Window>
-            <CreateCabinForm cabin={cabin} />
-          </Modal.Window>
+          <ContextMenuModal.Menu>
+            <ContextMenuModal.OpenAndCloseContextMenu id={cabin.id} />
 
-          <Modal.OpenAndClose openAndCloseBtnName={"confirm-delete"}>
-            <button>
-              <HiTrash />
-            </button>
-          </Modal.OpenAndClose>
+            <ContextMenuModal.ContextBody id={cabin.id}>
+              <ContextMenuModal.ContextItem
+                icon={<HiSquare2Stack />}
+                onClick={handleDuplicateCabin}
+                cabin={cabin}
+              >
+                Duplicate
+              </ContextMenuModal.ContextItem>
 
-          <Modal.Window windowName={"confirm-delete"}>
-            <ConfirmDelete
-              disabled={isDeleting}
-              onConfirm={() => mutate(cabin.id)}
-            />
-          </Modal.Window>
+              <Modal.OpenAndClose openAndCloseBtnName={"confirm-edit"}>
+                <ContextMenuModal.ContextItem icon={<HiPencil />}>
+                  Edit
+                </ContextMenuModal.ContextItem>
+              </Modal.OpenAndClose>
+
+              <Modal.OpenAndClose openAndCloseBtnName={"confirm-delete"}>
+                <ContextMenuModal.ContextItem icon={<HiTrash />}>
+                  Delete
+                </ContextMenuModal.ContextItem>
+              </Modal.OpenAndClose>
+            </ContextMenuModal.ContextBody>
+
+            <Modal.Window windowName={"confirm-edit"}>
+              <CreateCabinForm cabin={cabin} />
+            </Modal.Window>
+
+            <Modal.Window windowName={"confirm-delete"}>
+              <ConfirmDelete
+                disabled={isDeleting}
+                onConfirm={() => mutate(cabin.id)}
+              />
+            </Modal.Window>
+          </ContextMenuModal.Menu>
         </Modal>
-        {/* <ContextMenuModal>
-          <ContextMenuModal.OpenContextMenu openId={cabin.id}> */}
-        <button onClick={handleClick} ref={ref}>
-          <BiDotsVerticalRounded />
-        </button>
-        {/* <ContextMenu /> */}
-        {isOpen && <ContextMenu position={position} />}
-        {/* </ContextMenuModal.OpenContextMenu>
-          <ContextMenuModal.ContextBody verifyId={cabin.id}>
-          </ContextMenuModal.ContextBody>
-        </ContextMenuModal> */}
       </div>
     </TableRow>
   );
@@ -146,4 +133,6 @@ export default CabinRow;
 
 CabinRow.propTypes = {
   cabin: PropTypes.any,
+  handleClick: PropTypes.any,
+  isOpen: PropTypes.any,
 };

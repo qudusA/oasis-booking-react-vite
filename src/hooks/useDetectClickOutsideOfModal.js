@@ -17,5 +17,5 @@ export default function useModal({ close }) {
     [close]
   );
 
-  return { ref };
+  return ref;
 }

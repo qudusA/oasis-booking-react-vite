@@ -2,9 +2,10 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 const StyledContextMenu = styled.div`
   padding: 2rem;
-  position: absolute;
-  top: ${(props) => props.position.bottom};
-  right: ${(props) => props.position.left};
+  position: fixed;
+  top: ${(props) => props.position.y + "px"};
+  right: ${(props) => props.position.x + "px"};
+
   background-color: var(--color-grey-0);
   box-shadow: var(--shadow-delete-lg);
 `;

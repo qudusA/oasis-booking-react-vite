@@ -4,9 +4,12 @@ import { getAllCabin } from "../../services/cabin";
 import Spinner from "../../ui/Spinner";
 import CabinRow from "./CabinRow";
 import ErrorFallback from "../../ui/ErrorFallback";
+import ContextMenuModal from "../../ui/ContextMenuModal";
+// import { useState } from "react";
 
 const Table = styled.div`
   border: 1px solid var(--color-grey-200);
+  /* position: relative; */
 
   font-size: 1.4rem;
   background-color: var(--color-grey-0);
@@ -43,22 +46,34 @@ function CarbinTable() {
     queryFn: getAllCabin,
   });
 
+  // const [isOpenId, setIsOpenId] = useState("");
+  // function handleClick(e, setPosition, id) {
+  //   const rect = e.target.closest("button").getBoundingClientRect();
+  //   setIsOpenId((oldId) => (oldId === id ? "" : id));
+  //   setPosition({
+  //     x: window.innerWidth - rect.x - rect.width,
+  //     y: rect.bottom + 10,
+  //   });
+  // }
+
   if (isLoading) return <Spinner />;
   if (error) return <ErrorFallback>{error.message}</ErrorFallback>;
   return (
-    <Table role="table">
-      <TableHeader>
-        <TableHead></TableHead>
-        <TableHead>carbin</TableHead>
-        <TableHead>capacity</TableHead>
-        <TableHead>price</TableHead>
-        <TableHead>discount</TableHead>
-        <TableHead></TableHead>
-      </TableHeader>
-      {carbinData.map((data) => (
-        <CabinRow key={data.id} cabin={data} />
-      ))}
-    </Table>
+    <ContextMenuModal>
+      <Table role="table">
+        <TableHeader>
+          <TableHead></TableHead>
+          <TableHead>carbin</TableHead>
+          <TableHead>capacity</TableHead>
+          <TableHead>price</TableHead>
+          <TableHead>discount</TableHead>
+          <TableHead></TableHead>
+        </TableHeader>
+        {carbinData.map((data) => (
+          <CabinRow key={data.id} cabin={data} />
+        ))}
+      </Table>
+    </ContextMenuModal>
   );
 }
 
