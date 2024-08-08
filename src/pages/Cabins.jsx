@@ -1,22 +1,45 @@
-import style from "styled-components";
+import styled from "styled-components";
 import CarbinTable from "../features/cabins/CabinTable";
 import AddCabin from "../features/cabins/AddCabin";
+import FilterAndSortOperations from "../ui/FilterAndSortOperations";
 
-const TableDiv = style.div``;
+const TableDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-// const Table = style.section`
-//   display: grid;
-//   grid-template-columns: 2fr 0.5fr 2fr 1fr 1fr 0.5fr
-// `;
-
-// const TableRows = style.article`
-//   background-color: var( --color-grey-0)
-// `;
+  & > div:first-child {
+    font-weight: 600;
+    font-size: 2rem;
+    letter-spacing: 0.5px;
+  }
+`;
 
 function Cabins() {
   return (
     <>
-      <TableDiv>All cabins</TableDiv>
+      <TableDiv>
+        <div>All cabins</div>
+        <FilterAndSortOperations
+          field={"query"}
+          filterOptions={[
+            { query: "all", label: "All" },
+            { query: "with-discount", label: "With discount" },
+            { query: "no-discount", label: "No discount" },
+          ]}
+          sortOptions={[
+            { value: "name-asc", label: "sort by: name (A-Z)" },
+            { value: "name-desc", label: "sort by: name (Z-A)" },
+            { value: "maxCapacity-asc", label: "sort by: capacity (lowest)" },
+            {
+              value: "maxCapacity-desc",
+              label: "sort by: capacity (heighest)",
+            },
+            { value: "regularPrice-asc", label: "sort by: price (lowest)" },
+            { value: "regularPrice-desc", label: "sort by: price (heighest)" },
+          ]}
+        />
+      </TableDiv>
       <CarbinTable />
       <AddCabin />
     </>

@@ -13,6 +13,24 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 
+// import CustomSelect from "./CustomSelect.jsx";
+
+// const options = ["Option 1", "Option 2", "Option 3"];
+
+// const App = () => {
+//   const handleSelect = (option) => {
+//     console.log("Selected:", option);
+//   };
+
+//   return (
+//     <div>
+//       <h1>Custom Select Example</h1>
+//       <CustomSelect options={options} onSelect={handleSelect} />
+//     </div>
+//   );
+// };
+// export default App;
+
 export default function App() {
   const client = new QueryClient({
     defaultOptions: {

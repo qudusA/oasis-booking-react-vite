@@ -9,19 +9,11 @@ import useCreateCabin from "./useCreateCabin";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import ContextMenuModal from "../../ui/ContextMenuModal";
-// import ContextMenu from "../../ui/ContextMenu";
+import TableContext from "../../ui/TableContext";
 
-const TableRow = styled.div`
-  display: grid;
-  grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
-  column-gap: 2.4rem;
-  align-items: center;
-  padding: 1.4rem 2.4rem;
+// const TableRow = styled.div`
 
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-`;
+// `;
 
 const Img = styled.img`
   display: block;
@@ -50,7 +42,7 @@ const Discount = styled.div`
   color: var(--color-green-700);
 `;
 
-function CabinRow({ cabin }) {
+function CabinRow({ data }) {
   const queryClient = useQueryClient();
   const { createCabin } = useCreateCabin();
 
@@ -65,36 +57,36 @@ function CabinRow({ cabin }) {
     },
   });
 
-  function handleDuplicateCabin(cabin) {
+  function handleDuplicateCabin(data) {
     createCabin({
-      maxCapacity: cabin.maxCapacity,
-      regularPrice: cabin.regularPrice,
-      discount: cabin.discount,
-      image: cabin.image,
-      name: `copy of ${cabin.name}`,
-      description: cabin.description,
+      maxCapacity: data.maxCapacity,
+      regularPrice: data.regularPrice,
+      discount: data.discount,
+      image: data.image,
+      name: `copy of ${data.name}`,
+      description: data.description,
     });
   }
 
   return (
-    <TableRow>
-      <Img src={cabin.image} />
-      <Cabin>{cabin.name}</Cabin>
-      <div>fill up to {cabin.maxCapacity} guest</div>
-      <Price>{cabin.regularPrice}</Price>
+    <TableContext.TableRow>
+      <Img src={data.image} />
+      <Cabin>{data.name}</Cabin>
+      <div>fill up to {data.maxCapacity} guest</div>
+      <Price>{data.regularPrice}</Price>
       <Discount>
-        {cabin.discount ? cabin.discount : <span>&mdash;</span>}
+        {data.discount ? data.discount : <span>&mdash;</span>}
       </Discount>
       <div>
         <Modal>
           <ContextMenuModal.Menu>
-            <ContextMenuModal.OpenAndCloseContextMenu id={cabin.id} />
+            <ContextMenuModal.OpenAndCloseContextMenu id={data.id} />
 
-            <ContextMenuModal.ContextBody id={cabin.id}>
+            <ContextMenuModal.ContextBody id={data.id}>
               <ContextMenuModal.ContextItem
                 icon={<HiSquare2Stack />}
                 onClick={handleDuplicateCabin}
-                cabin={cabin}
+                cabin={data}
               >
                 Duplicate
               </ContextMenuModal.ContextItem>
@@ -113,26 +105,26 @@ function CabinRow({ cabin }) {
             </ContextMenuModal.ContextBody>
 
             <Modal.Window windowName={"confirm-edit"}>
-              <CreateCabinForm cabin={cabin} />
+              <CreateCabinForm cabin={data} />
             </Modal.Window>
 
             <Modal.Window windowName={"confirm-delete"}>
               <ConfirmDelete
                 disabled={isDeleting}
-                onConfirm={() => mutate(cabin.id)}
+                onConfirm={() => mutate(data.id)}
               />
             </Modal.Window>
           </ContextMenuModal.Menu>
         </Modal>
       </div>
-    </TableRow>
+    </TableContext.TableRow>
   );
 }
 
 export default CabinRow;
 
 CabinRow.propTypes = {
-  cabin: PropTypes.any,
+  data: PropTypes.any,
   handleClick: PropTypes.any,
   isOpen: PropTypes.any,
 };
