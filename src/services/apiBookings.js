@@ -1,5 +1,32 @@
+import { PAGE_SIZE } from "../utils/global";
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
+
+export async function getAllBookings(status, sortBy, page) {
+  // const { data, error } = await supabase.from("bookings").select("*");
+  // console.log("service", status);
+  let query = supabase
+    .from("bookings")
+    .select("*, cabins(name), guests(fullName, email)", { count: "exact" });
+
+  if (status) query = query.eq("status", status);
+
+  if (sortBy.field)
+    query = query.order(sortBy.field, {
+      ascending: sortBy.direction === "asc",
+    });
+
+  const from = (page - 1) * PAGE_SIZE;
+  const to = page * PAGE_SIZE - 1;
+
+  if (page) query = query.range(from, to);
+
+  let { data: bookings, error, count } = await query;
+  if (error) throw new Error("error occur while fetching bookings");
+
+  // console.log("service", count, bookings);
+  return { bookings, count };
+}
 
 export async function getBooking(id) {
   const { data, error } = await supabase

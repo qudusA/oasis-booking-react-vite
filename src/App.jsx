@@ -12,6 +12,7 @@ import AppLayout from "./ui/AppLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
+import Booking from "./pages/Booking";
 
 // import CustomSelect from "./CustomSelect.jsx";
 
@@ -51,6 +52,7 @@ export default function App() {
             <Route element={<Dashboard />} path="/dashboard" />
             <Route element={<Account />} path="/account" />
             <Route element={<Bookings />} path="/bookings" />
+            <Route element={<Booking />} path="/booking/:bookingId" />
             <Route element={<Carbins />} path="/carbins" />
             <Route element={<Users />} path="/users" />
             <Route element={<Settings />} path="/settings" />

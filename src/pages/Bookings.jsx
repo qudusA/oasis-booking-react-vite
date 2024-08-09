@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import CarbinTable from "../features/cabins/CabinTable";
-import AddCabin from "../features/cabins/AddCabin";
+// import AddCabin from "../features/cabins/AddCabin";
 import FilterAndSortOperations from "../ui/FilterAndSortOperations";
+import BookingTable from "../features/bookings/BookingTable";
 
 const TableDiv = styled.div`
   display: flex;
@@ -20,10 +20,27 @@ function Bookings() {
     <>
       <TableDiv>
         <div>booking</div>
-        <FilterAndSortOperations />
+        <FilterAndSortOperations
+          field="status"
+          filterOptions={[
+            { query: "all", label: "All" },
+            { query: "checked-out", label: "Checked out" },
+            { query: "checked-in", label: "Checked in" },
+            { query: "unconfirmed", label: "Unconfirmed" },
+          ]}
+          sortOptions={[
+            { value: "startDate-desc", label: "Sort by date (recent first)" },
+            { value: "startDate-asc", label: "Sort by date (earlier first)" },
+            {
+              value: "totalPrice-desc",
+              label: "Sort by amount (high first)",
+            },
+            { value: "totalPrice-asc", label: "Sort by amount (low first)" },
+          ]}
+        />
       </TableDiv>
-      <CarbinTable />
-      <AddCabin />
+      <BookingTable />
+      {/* <AddCabin /> */}
     </>
   );
 }

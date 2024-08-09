@@ -20,6 +20,7 @@ const StyledContextBody = styled.div`
   padding: 1rem;
   position: fixed;
   display: grid;
+  /* align-items: center; */
   border-radius: 5px;
   gap: 5px;
   top: ${(props) => props.position.y + "px"};

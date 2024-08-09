@@ -7,7 +7,6 @@ const Table = styled.div`
   /* position: relative; */
 
   font-size: 1.4rem;
-  background-color: var(--color-grey-0);
   border-radius: 7px;
   overflow: hidden;
 `;
@@ -42,7 +41,10 @@ const StyledTableRow = styled(CommonStyle)`
   }
 `;
 
-const StyledBody = styled.div``;
+const StyledBody = styled.div`
+  background-color: var(--color-grey-0);
+  margin-bottom: 1rem;
+`;
 
 const TableCreateContext = createContext();
 
@@ -63,7 +65,7 @@ function TableHeader({ children }) {
   );
 }
 
-function TableBody({ render, data }) {
+function TableBody({ render, data = [] }) {
   return <StyledBody>{data.map(render)}</StyledBody>;
 }
 

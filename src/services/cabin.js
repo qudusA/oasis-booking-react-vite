@@ -1,15 +1,15 @@
 import supabase, { supabaseUrl } from "./supabase";
 
 export async function getAllCabin() {
-  let { data: carbins, error } = await supabase.from("carbins").select("*");
+  let { data: cabins, error } = await supabase.from("cabins").select("*");
 
   if (error) throw new Error("error occur while fetching cabins");
 
-  return carbins;
+  return cabins;
 }
 
 export async function deleteACabinItemById(id) {
-  let { error } = await supabase.from("carbins").delete().eq("id", id);
+  let { error } = await supabase.from("cabins").delete().eq("id", id);
   if (error)
     throw new Error(`error occur while deleting carbin item with id ${id}`);
 }
@@ -26,7 +26,7 @@ export async function saveACarbin(cabin, id) {
     ? cabin.image
     : `${supabaseUrl}/storage/v1/object/public/carbinImage/${imageName}`;
 
-  let query = supabase.from("carbins");
+  let query = supabase.from("cabins");
 
   if (!id) query = query.insert([{ ...cabin, image: imagePath }]);
 
@@ -42,7 +42,7 @@ export async function saveACarbin(cabin, id) {
     .upload(imageName, cabin.image);
 
   if (uploadError) {
-    if (!id) await supabase.from("carbins").delete().eq("id", data[0].id);
+    if (!id) await supabase.from("cabins").delete().eq("id", data[0].id);
     throw new Error(`carbin image failed to upload...`);
   }
 

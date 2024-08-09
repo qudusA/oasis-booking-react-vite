@@ -1,187 +1,177 @@
+import { HiClock, HiCurrencyDollar, HiHomeModern } from "react-icons/hi2";
 import styled from "styled-components";
+import PropTypes from "prop-types";
+import { formatCurrency, formatDistanceFromNow } from "../../utils/helpers";
 import { format, isToday } from "date-fns";
-import {
-  HiOutlineChatBubbleBottomCenterText,
-  HiOutlineCheckCircle,
-  HiOutlineCurrencyDollar,
-  HiOutlineHomeModern,
-} from "react-icons/hi2";
-
-import DataItem from "../../ui/DataItem";
+import Spinner from "../../ui/Spinner";
 import { Flag } from "../../ui/Flag";
 
-import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
-
-const StyledBookingDataBox = styled.section`
-  /* Box */
-  background-color: var(--color-grey-0);
-  border: 1px solid var(--color-grey-100);
-  border-radius: var(--border-radius-md);
-
-  overflow: hidden;
+const StyledContainer = styled.div`
+  /* margin-bottom: 30px; */
+  /* width: 90%; */
+  color: var(--color-grey-300);
 `;
 
-const Header = styled.header`
+const StyledHead = styled.p`
   background-color: var(--color-brand-500);
-  padding: 2rem 4rem;
-  color: #e0e7ff;
-  font-size: 1.8rem;
-  font-weight: 500;
+  padding: 20px 30px;
+  border-radius: 5px 5px 0 0;
   display: flex;
-  align-items: center;
   justify-content: space-between;
 
-  svg {
-    height: 3.2rem;
-    width: 3.2rem;
+  & > span:first-child {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
   }
+`;
 
-  & div:first-child {
+const StyledBody = styled.div`
+  padding: 20px 30px;
+  background-color: var(--color-grey-0);
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  border-radius: 0 0 5px 5px;
+
+  & > p:nth-child(2) {
     display: flex;
     align-items: center;
-    gap: 1.6rem;
-    font-weight: 600;
-    font-size: 1.8rem;
-  }
+    gap: 1rem;
 
-  & span {
-    font-family: "Sono";
-    font-size: 2rem;
-    margin-left: 4px;
+    & > span:first-child {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
   }
 `;
 
-const Section = styled.section`
-  padding: 3.2rem 4rem 1.2rem;
-`;
-
-const Guest = styled.div`
+const About = styled.p`
   display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  margin-bottom: 1.6rem;
-  color: var(--color-grey-500);
-
-  & p:first-of-type {
-    font-weight: 500;
-    color: var(--color-grey-700);
+  gap: 1rem;
+  & > span:first-child {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
   }
 `;
 
-const Price = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.6rem 3.2rem;
-  border-radius: var(--border-radius-sm);
-  margin-top: 2.4rem;
-
+const StyledStatus = styled.div`
   background-color: ${(props) =>
     props.isPaid ? "var(--color-green-100)" : "var(--color-yellow-100)"};
   color: ${(props) =>
     props.isPaid ? "var(--color-green-700)" : "var(--color-yellow-700)"};
+  padding: 20px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
 
-  & p:last-child {
-    text-transform: uppercase;
-    font-size: 1.4rem;
-    font-weight: 600;
+  & > p:first-child {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
   }
 
-  svg {
-    height: 2.4rem;
-    width: 2.4rem;
-    color: currentColor !important;
+  & > p:first-child > span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 `;
 
-const Footer = styled.footer`
-  padding: 1.6rem 4rem;
-  font-size: 1.2rem;
-  color: var(--color-grey-500);
-  text-align: right;
+const Dot = styled.span`
+  font-weight: 900;
+  border-radius: 100px;
 `;
 
-// A purely presentational component
-function BookingDataBox({ booking }) {
+const Footer = styled.p`
+  text-align: end;
+`;
+
+export default function BookingDataBox({ booking = {}, isLoading }) {
   const {
+    id: bookingId,
     created_at,
     startDate,
     endDate,
     numNights,
     numGuests,
-    cabinPrice,
-    extrasPrice,
-    totalPrice,
     hasBreakfast,
-    observations,
+    totalPrice,
+    extrasPrice,
+    cabinPrice,
     isPaid,
-    guests: { fullName: guestName, email, country, countryFlag, nationalID },
+    // status,
+    guests: { fullName: guestName, email, nationalID, countryFlag },
     cabins: { name: cabinName },
   } = booking;
 
+  if (isLoading) return <Spinner />;
   return (
-    <StyledBookingDataBox>
-      <Header>
-        <div>
-          <HiOutlineHomeModern />
-          <p>
-            {numNights} nights in Cabin <span>{cabinName}</span>
-          </p>
-        </div>
-
-        <p>
+    <StyledContainer>
+      <StyledHead>
+        <span>
+          <HiHomeModern />
+          <span>
+            #{numNights} nights in cabin {cabinName}
+          </span>
+        </span>
+        <span>
           {format(new Date(startDate), "EEE, MMM dd yyyy")} (
           {isToday(new Date(startDate))
             ? "Today"
             : formatDistanceFromNow(startDate)}
           ) &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
+        </span>
+      </StyledHead>
+      <StyledBody>
+        <About>
+          <span>
+            <span>
+              <Flag src={countryFlag} alt={bookingId} />
+            </span>
+            {guestName} + {numGuests} guest
+          </span>
+          <Dot>&middot;</Dot>
+          <span>{email}</span>
+          <Dot>&middot;</Dot>
+          <span>National ID {nationalID}</span>
+        </About>
+        <p>
+          <span>
+            <HiClock />
+            <span>Breakfast included?</span>
+          </span>
+          <span>{hasBreakfast ? "yes" : "no"}</span>
         </p>
-      </Header>
-
-      <Section>
-        <Guest>
-          {countryFlag && <Flag src={countryFlag} alt={`Flag of ${country}`} />}
+        {/* last */}
+        <StyledStatus isPaid={isPaid}>
           <p>
-            {guestName} {numGuests > 1 ? `+ ${numGuests - 1} guests` : ""}
+            <span>
+              <HiCurrencyDollar />
+              <span>total price</span>
+            </span>
+            <span>
+              {formatCurrency(totalPrice)}{" "}
+              {hasBreakfast &&
+                ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
+                  extrasPrice
+                )} breakfast)`}
+            </span>
           </p>
-          <span>&bull;</span>
-          <p>{email}</p>
-          <span>&bull;</span>
-          <p>National ID {nationalID}</p>
-        </Guest>
-
-        {observations && (
-          <DataItem
-            icon={<HiOutlineChatBubbleBottomCenterText />}
-            label="Observations"
-          >
-            {observations}
-          </DataItem>
-        )}
-
-        <DataItem icon={<HiOutlineCheckCircle />} label="Breakfast included?">
-          {hasBreakfast ? "Yes" : "No"}
-        </DataItem>
-
-        <Price isPaid={isPaid}>
-          <DataItem icon={<HiOutlineCurrencyDollar />} label={`Total price`}>
-            {formatCurrency(totalPrice)}
-
-            {hasBreakfast &&
-              ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
-                extrasPrice
-              )} breakfast)`}
-          </DataItem>
-
           <p>{isPaid ? "Paid" : "Will pay at property"}</p>
-        </Price>
-      </Section>
-
-      <Footer>
-        <p>Booked {format(new Date(created_at), "EEE, MMM dd yyyy, p")}</p>
-      </Footer>
-    </StyledBookingDataBox>
+        </StyledStatus>
+        <Footer>
+          booked {format(new Date(created_at), "EEE, MMM dd yyyy, p")}
+        </Footer>
+      </StyledBody>
+    </StyledContainer>
   );
 }
 
-export default BookingDataBox;
+BookingDataBox.propTypes = {
+  booking: PropTypes.any,
+  isLoading: PropTypes.any,
+};

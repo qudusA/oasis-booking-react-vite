@@ -33,10 +33,14 @@ const variations = {
   secondary: css`
     color: var(--color-grey-600);
     background: var(--color-grey-0);
-    border: 1px solid var(--color-grey-200);
+    border: 1px solid var(--color-grey-100);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 
-    &:hover {
-      background-color: var(--color-grey-50);
+    &:not(:disabled):hover {
+      background-color: var(--color-brand-500);
+      color: var(--color-brand-50);
     }
   `,
   danger: css`
@@ -54,6 +58,8 @@ const StyledButton = styled.button`
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-sm);
   text-transform: uppercase;
+  cursor: pointer;
+
   ${(props) => sizes[props.size]};
   ${(props) => variations[props.variation]};
   ${(props) =>
@@ -61,11 +67,27 @@ const StyledButton = styled.button`
     css`
       cursor: not-allowed;
     `};
+
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: space-between; */
+  /* gap: 3 */
 `;
 
-export default function Button({ onClick, children, variation }) {
+export default function Button({
+  onClick,
+  children,
+  variation,
+  size,
+  disabled,
+}) {
   return (
-    <StyledButton variation={variation} onClick={() => onClick?.()}>
+    <StyledButton
+      variation={variation}
+      sizes={size}
+      onClick={() => onClick?.()}
+      disabled={disabled}
+    >
       {children}
     </StyledButton>
   );
@@ -80,4 +102,6 @@ Button.propTypes = {
   children: PropTypes.any,
   onClick: PropTypes.any,
   variation: PropTypes.any,
+  size: PropTypes.any,
+  disabled: PropTypes.any,
 };
