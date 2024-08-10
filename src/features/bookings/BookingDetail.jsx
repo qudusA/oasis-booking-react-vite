@@ -55,6 +55,8 @@ export default function BookingDetail() {
   const { bookingId } = useParams();
   const navigate = useNavigate();
 
+  const moveBack = () => navigate(-1, { replace: true });
+
   const { data: booking = {}, isLoading } = useQuery({
     queryKey: ["booking", bookingId],
     queryFn: () => getBooking(bookingId),
@@ -69,17 +71,11 @@ export default function BookingDetail() {
           <h3>Booking #{bookingId}</h3>
           <span>{booking.status.replace("-", " ")}</span>
         </div>
-        <StyledBtn onClick={() => navigate(-1, { replace: true })}>
-          &larr; Back
-        </StyledBtn>
+        <StyledBtn onClick={moveBack}>&larr; Back</StyledBtn>
       </StyledBookingDetail>
       <BookingDataBox isLoading={isLoading} booking={booking} />
       <StyledLower>
-        <Button
-          variation="secondary"
-          size="small"
-          onClick={() => navigate(-1, { replace: true })}
-        >
+        <Button variation="secondary" size="small" onClick={moveBack}>
           Back
         </Button>
       </StyledLower>

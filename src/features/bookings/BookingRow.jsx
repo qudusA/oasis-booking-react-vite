@@ -93,6 +93,14 @@ function BookingRow({ booking = {} }) {
         >
           see booking
         </ContextMenuModal.ContextItem>
+        {status === "unconfirmed" && (
+          <ContextMenuModal.ContextItem
+            onClick={() => navigate(`/check-in/${bookingId}`)}
+            icon={<HiEye />}
+          >
+            check in
+          </ContextMenuModal.ContextItem>
+        )}
       </ContextMenuModal.ContextBody>
     </TableContext.TableRow>
   );
