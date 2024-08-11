@@ -111,6 +111,7 @@ function CabinRow({ data }) {
             <Modal.Window windowName={"confirm-delete"}>
               <ConfirmDelete
                 disabled={isDeleting}
+                feature="carbin"
                 onConfirm={() => mutate(data.id)}
               />
             </Modal.Window>

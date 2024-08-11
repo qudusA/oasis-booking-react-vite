@@ -2,6 +2,7 @@ import styled from "styled-components";
 // import AddCabin from "../features/cabins/AddCabin";
 import FilterAndSortOperations from "../ui/FilterAndSortOperations";
 import BookingTable from "../features/bookings/BookingTable";
+// import BookingTableOperations from "../features/bookings/BookingTableOperations";
 
 const TableDiv = styled.div`
   display: flex;

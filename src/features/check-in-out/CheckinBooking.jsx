@@ -2,13 +2,14 @@ import styled from "styled-components";
 import Button from "../../ui/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getBooking, updateBooking } from "../../services/apiBookings";
+import { useQuery } from "@tanstack/react-query";
+import { getBooking } from "../../services/apiBookings";
 import Spinner from "../../ui/Spinner";
 import BookingDataBox from "../bookings/BookingDataBox";
 import { formatCurrency } from "../../utils/helpers";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import useGetSetting from "../settings/useGetSetting";
+import useCheckIn from "./useCheckIn";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -72,8 +73,10 @@ const StyledCheckBox = styled.p`
 export default function CheckinBooking() {
   const { bookingId } = useParams();
   const navigate = useNavigate();
-  const [checked, setChecked] = useState(false);
-  const queryClient = useQueryClient();
+  const [confirmedPayment, setConfirmedPayment] = useState(false);
+  const [needBreakFast, setNeedBreakFast] = useState(false);
+  const { settingData, isLoadingSetting } = useGetSetting();
+  const { checkIn, isCheckingIn } = useCheckIn();
 
   const moveBack = () => navigate(-1, { replace: true });
 
@@ -82,20 +85,26 @@ export default function CheckinBooking() {
     queryFn: () => getBooking(bookingId),
   });
 
-  const { mutate } = useMutation({
-    mutationFn: (id) =>
-      updateBooking(id, { isPaid: true, status: "checked-in" }),
-    onSuccess: (bookingId) => {
-      queryClient.invalidateQueries({ active: true });
-      toast.success(`updated booking with id #${bookingId}`);
-      navigate("/");
-    },
-    onError: () => toast.error("error occur while updating..."),
-  });
+  const extralPrice =
+    booking.numGuests * settingData?.breakfastPrice * booking.numNights;
 
-  useEffect(() => setChecked(booking?.isPaid || false), [booking]);
+  useEffect(() => setConfirmedPayment(booking?.isPaid || false), [booking]);
+  function handleConfirmPayment() {
+    if (!confirmedPayment) return;
+    if (needBreakFast) {
+      return checkIn({
+        bookingId,
+        breakfast: {
+          hasBreakfast: true,
+          extrasPrice: extralPrice,
+          totalPrice: extralPrice + booking.totalPrice,
+        },
+      });
+    }
+    checkIn({ bookingId, breakfast: {} });
+  }
 
-  if (isLoading) return <Spinner />;
+  if (isLoading || isLoadingSetting) return <Spinner />;
 
   return (
     <StyledContainer>
@@ -107,27 +116,55 @@ export default function CheckinBooking() {
         <StyledBtn onClick={moveBack}>&larr; Back</StyledBtn>
       </StyledBookingDetail>
       <BookingDataBox isLoading={isLoading} booking={booking} />
+      {!booking?.hasBreakfast && (
+        <StyledCheckBox>
+          {" "}
+          <input
+            checked={needBreakFast}
+            onChange={() => {
+              setNeedBreakFast((confirmedPayment) => !confirmedPayment);
+              setConfirmedPayment(false);
+            }}
+            id={settingData?.id}
+            type="checkbox"
+            // disabled={booking?.isPaid}
+          />{" "}
+          <label htmlFor={settingData?.id}>
+            want to have breakfast for{" "}
+            {formatCurrency(settingData?.breakfastPrice)}
+            {/* {formatCurrency(booking.totalPrice)} */}
+          </label>
+        </StyledCheckBox>
+      )}
+
       <StyledCheckBox>
         {" "}
         <input
-          checked={checked}
-          onClick={() => setChecked((checked) => !checked)}
+          checked={confirmedPayment}
+          onChange={() =>
+            setConfirmedPayment((confirmedPayment) => !confirmedPayment)
+          }
           id={bookingId}
           type="checkbox"
-          disabled={booking?.isPaid}
+          disabled={confirmedPayment}
         />{" "}
         <label htmlFor={bookingId}>
           i confirm that {booking?.guests.fullName} has paid the total amount of{" "}
-          {formatCurrency(booking.totalPrice)}
+          {!needBreakFast
+            ? formatCurrency(booking.totalPrice)
+            : `${formatCurrency(booking.totalPrice + extralPrice)} (${
+                formatCurrency(booking.totalPrice) +
+                " + " +
+                formatCurrency(extralPrice)
+              }
+              )`}
         </label>
       </StyledCheckBox>
+
       <StyledLower>
         <Button
-          disabled={!checked}
-          onClick={() => {
-            if (!checked) return;
-            mutate(bookingId);
-          }}
+          disabled={!confirmedPayment || isCheckingIn}
+          onClick={handleConfirmPayment}
         >
           Check in #{bookingId}
         </Button>

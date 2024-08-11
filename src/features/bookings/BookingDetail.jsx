@@ -6,6 +6,11 @@ import BookingDataBox from "./BookingDataBox";
 import { useQuery } from "@tanstack/react-query";
 import { getBooking } from "../../services/apiBookings";
 import Spinner from "../../ui/Spinner";
+import { HiArrowUpOnSquare, HiTrash } from "react-icons/hi2";
+import useCheckOut from "../check-in-out/useCheckOut";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
+import useDeleteBooking from "./useDeleteBooking";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -44,6 +49,7 @@ const StyledBookingDetail = styled.article`
 const StyledLower = styled.div`
   display: flex;
   justify-content: end;
+  gap: 1rem;
 `;
 
 const StyledBtn = styled.button`
@@ -54,6 +60,9 @@ const StyledBtn = styled.button`
 export default function BookingDetail() {
   const { bookingId } = useParams();
   const navigate = useNavigate();
+  const { checkOut, isCheckingOut } = useCheckOut();
+  const { bookingDelete, isDeleting } = useDeleteBooking(bookingId);
+  // const {close} =
 
   const moveBack = () => navigate(-1, { replace: true });
 
@@ -75,6 +84,33 @@ export default function BookingDetail() {
       </StyledBookingDetail>
       <BookingDataBox isLoading={isLoading} booking={booking} />
       <StyledLower>
+        <Modal>
+          <Modal.OpenAndClose openAndCloseBtnName={"confirm-delete"}>
+            <Button variation="danger" size="small">
+              <HiTrash /> Delete
+            </Button>
+          </Modal.OpenAndClose>
+          <Modal.Window windowName="confirm-delete">
+            <ConfirmDelete
+              disabled={isDeleting}
+              feature="booking"
+              onConfirm={() => {
+                bookingDelete(bookingId);
+                moveBack();
+              }}
+            />
+          </Modal.Window>
+        </Modal>
+        {booking.status === "checked-in" && (
+          <Button
+            disabled={isCheckingOut}
+            variation="secondary"
+            size="small"
+            onClick={() => checkOut(bookingId)}
+          >
+            <HiArrowUpOnSquare /> check out
+          </Button>
+        )}
         <Button variation="secondary" size="small" onClick={moveBack}>
           Back
         </Button>

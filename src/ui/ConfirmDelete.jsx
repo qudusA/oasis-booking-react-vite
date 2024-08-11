@@ -20,14 +20,19 @@ const BtnContainer = styled.div`
   justify-content: flex-end;
 `;
 
-export default function ConfirmDelete({ onClose, onConfirm, disabled }) {
+export default function ConfirmDelete({
+  onClose,
+  onConfirm,
+  disabled,
+  feature,
+}) {
   return (
     <Container>
       <p>
-        <strong> Delete cabins</strong>
+        <strong> Delete {feature}</strong>
       </p>
       <div>
-        Are you sure you want to <strong> delete</strong> this cabin
+        Are you sure you want to <strong> delete</strong> this {feature}{" "}
         permanently? This action cannot be undo.
       </div>
       <BtnContainer>
@@ -53,4 +58,5 @@ ConfirmDelete.propTypes = {
   onClose: PropTypes.any,
   onConfirm: PropTypes.any,
   disabled: PropTypes.any,
+  feature: PropTypes.any,
 };

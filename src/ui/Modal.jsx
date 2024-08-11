@@ -62,11 +62,8 @@ export default function Modal({ children }) {
 
 function Open({ children, openAndCloseBtnName }) {
   const { open } = useContext(ModalContext);
-
   return (
-    <div>
-      {cloneElement(children, { onClick: () => open(openAndCloseBtnName) })}
-    </div>
+    <>{cloneElement(children, { onClick: () => open(openAndCloseBtnName) })}</>
   );
 }
 

@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import Pagination from "../../ui/Pagination";
 import { PAGE_SIZE } from "../../utils/global";
 import ContextMenuModal from "../../ui/ContextMenuModal";
+// import Modal from "../../ui/Modal";
 // import Menus from "../../ui/Menus";
 
 function BookingTable() {
@@ -22,6 +23,7 @@ function BookingTable() {
   let currentPage = !searchParams.get("page")
     ? 1
     : Number(searchParams.get("page"));
+
   const {
     data: { bookings: bookingData, count } = {},
     isLoading,
@@ -48,6 +50,7 @@ function BookingTable() {
 
   if (isLoading) return <Spinner />;
   return (
+    // <Modal>
     <ContextMenuModal>
       <TableContext columns="0.6fr 2fr 2.4fr 1.4fr 1fr 3.2rem">
         <TableContext.TableHeader>
@@ -65,10 +68,10 @@ function BookingTable() {
             <BookingRow key={booking.id} booking={booking} />
           )}
         />
-
         <Pagination count={count} />
       </TableContext>
     </ContextMenuModal>
+    // </Modal>
   );
 }
 

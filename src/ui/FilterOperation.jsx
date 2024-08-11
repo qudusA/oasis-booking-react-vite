@@ -44,6 +44,7 @@ export default function FilterOperation({ field, options }) {
   const currentSelected = searchParams.get(field) || options.at(0).query;
   function handleClick(label) {
     searchParams.set(field, label);
+    if (searchParams.get("page")) searchParams.set("page", 1);
     setSearchParams(searchParams);
   }
 

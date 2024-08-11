@@ -9,8 +9,17 @@ import TableContext from "../../ui/TableContext";
 
 import PropTypes from "prop-types";
 import ContextMenuModal from "../../ui/ContextMenuModal";
-import { HiEye } from "react-icons/hi2";
+import {
+  HiArrowDownOnSquare,
+  HiArrowUpOnSquare,
+  HiEye,
+  HiTrash,
+} from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
+
+import useDeleteBooking from "./useDeleteBooking";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -49,11 +58,13 @@ function BookingRow({ booking = {} }) {
     numNights,
     // numGuests,
     totalPrice,
+    // isPaid,
     status,
     guests: { fullName: guestName, email },
     cabins: { name: cabinName },
   } = booking;
 
+  const { bookingDelete, isDeleting } = useDeleteBooking(bookingId);
   const statusToTagName = {
     unconfirmed: "blue",
     "checked-in": "green",
@@ -85,23 +96,49 @@ function BookingRow({ booking = {} }) {
       <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
 
       <Amount>{formatCurrency(totalPrice)}</Amount>
-      <ContextMenuModal.OpenAndCloseContextMenu id={bookingId} />
-      <ContextMenuModal.ContextBody id={bookingId}>
-        <ContextMenuModal.ContextItem
-          onClick={() => navigate(`/booking/${bookingId}`)}
-          icon={<HiEye />}
-        >
-          see booking
-        </ContextMenuModal.ContextItem>
-        {status === "unconfirmed" && (
+      <Modal>
+        <ContextMenuModal.OpenAndCloseContextMenu id={bookingId} />
+        <ContextMenuModal.ContextBody id={bookingId}>
           <ContextMenuModal.ContextItem
-            onClick={() => navigate(`/check-in/${bookingId}`)}
+            onClick={() => navigate(`/booking/${bookingId}`)}
             icon={<HiEye />}
           >
-            check in
+            see booking
           </ContextMenuModal.ContextItem>
-        )}
-      </ContextMenuModal.ContextBody>
+          {status === "unconfirmed" && (
+            <ContextMenuModal.ContextItem
+              onClick={() => navigate(`/check-in/${bookingId}`)}
+              icon={<HiArrowDownOnSquare />}
+            >
+              check in
+            </ContextMenuModal.ContextItem>
+          )}
+
+          {status === "checked-in" && (
+            <ContextMenuModal.ContextItem
+              onClick={() => navigate(`/check-in/${bookingId}`)}
+              icon={<HiArrowUpOnSquare />}
+            >
+              check out
+            </ContextMenuModal.ContextItem>
+          )}
+
+          {/* {!isPaid && ( */}
+          <Modal.OpenAndClose openAndCloseBtnName={"confirm-delete"}>
+            <ContextMenuModal.ContextItem icon={<HiTrash />}>
+              Delete
+            </ContextMenuModal.ContextItem>
+          </Modal.OpenAndClose>
+          {/* )} */}
+        </ContextMenuModal.ContextBody>
+        <Modal.Window windowName="confirm-delete">
+          <ConfirmDelete
+            disabled={isDeleting}
+            feature="booking"
+            onConfirm={() => bookingDelete(bookingId)}
+          />
+        </Modal.Window>
+      </Modal>
     </TableContext.TableRow>
   );
 }

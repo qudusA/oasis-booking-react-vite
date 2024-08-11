@@ -60,9 +60,13 @@ const About = styled.p`
 
 const StyledStatus = styled.div`
   background-color: ${(props) =>
-    props.isPaid ? "var(--color-green-100)" : "var(--color-yellow-100)"};
+    props.ispaid === "true"
+      ? "var(--color-green-100)"
+      : "var(--color-yellow-100)"};
   color: ${(props) =>
-    props.isPaid ? "var(--color-green-700)" : "var(--color-yellow-700)"};
+    props.ispaid === "true"
+      ? "var(--color-green-700)"
+      : "var(--color-yellow-700)"};
   padding: 20px;
   border-radius: 5px;
   display: flex;
@@ -147,7 +151,7 @@ export default function BookingDataBox({ booking = {}, isLoading }) {
           <span>{hasBreakfast ? "yes" : "no"}</span>
         </p>
         {/* last */}
-        <StyledStatus isPaid={isPaid}>
+        <StyledStatus ispaid={isPaid.toString()}>
           <p>
             <span>
               <HiCurrencyDollar />
