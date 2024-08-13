@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import Heading from "./Heading";
+import Button from "./Button";
 
 const StyledErrorFallback = styled.main`
   height: 100vh;
@@ -31,14 +33,20 @@ const Box = styled.div`
   }
 `;
 
-export default function ErrorFallback({ children }) {
+export default function ErrorFallback({ children, error, resetErrorBoundary }) {
   return (
     <StyledErrorFallback>
-      <Box>{children}</Box>
+      <Box>
+        <Heading as="h1">{children}</Heading>
+        <p>{error.message}</p>
+        <Button onClick={resetErrorBoundary}>reset</Button>
+      </Box>
     </StyledErrorFallback>
   );
 }
 
 ErrorFallback.propTypes = {
   children: PropTypes.any,
+  error: PropTypes.any,
+  resetErrorBoundary: PropTypes.any,
 };

@@ -1,7 +1,9 @@
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const StyledStat = styled.div`
   /* Box */
+  /* background-color: red; */
   background-color: var(--color-grey-0);
   border: 1px solid var(--color-grey-100);
   border-radius: var(--border-radius-md);
@@ -58,3 +60,10 @@ function Stat({ icon, title, value, color }) {
 }
 
 export default Stat;
+
+Stat.propTypes = {
+  icon: PropTypes.any,
+  title: PropTypes.any,
+  value: PropTypes.any,
+  color: PropTypes.any,
+};

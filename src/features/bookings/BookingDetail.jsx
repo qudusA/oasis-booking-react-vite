@@ -72,7 +72,7 @@ export default function BookingDetail() {
   });
 
   if (isLoading) return <Spinner />;
-
+  
   return (
     <StyledContainer>
       <StyledBookingDetail status={booking.status}>

@@ -8,6 +8,10 @@ const sizes = {
     text-transform: uppercase;
     font-weight: 600;
     text-align: center;
+    /* width: 14rem; */
+    /* word-break: keep-all; */
+    /* overflow-wrap: normal; */
+    /* white-space: nowrap; */
   `,
   medium: css`
     font-size: 1.4rem;
