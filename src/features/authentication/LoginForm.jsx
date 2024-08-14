@@ -31,8 +31,8 @@ const Input = styled.input`
 const Label = styled.label``;
 
 function LoginForm() {
-  const [email, setEmail] = useState("test@test.com");
-  const [password, setPassword] = useState("testedOk");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
